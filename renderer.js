@@ -512,6 +512,42 @@ function loadAtomicExamples() {
 
   examplesContainer.innerHTML =
     contentHtml || `<p style="color:#888;">No example files found in <code>examples/</code>.</p>`;
+
+  // Auto-convert any plain <div class="samp-vid"> into a collapsible <details class="samp-vid"> dropdown
+  examplesContainer.querySelectorAll('div.samp-vid').forEach((div) => {
+    const details = document.createElement('details');
+    details.className = 'samp-vid';
+
+    const heading = div.querySelector('h4, h5, label');
+    const titleText = heading ? heading.textContent : '🎬 Sample Video Walkthrough';
+    if (heading) heading.remove();
+
+    const summary = document.createElement('summary');
+    summary.textContent = titleText;
+
+    const body = document.createElement('div');
+    body.className = 'samp-vid-body';
+    while (div.firstChild) {
+      body.appendChild(div.firstChild);
+    }
+
+    details.appendChild(summary);
+    details.appendChild(body);
+    div.replaceWith(details);
+  });
+
+  // Ensure all videos inside examples have controls and pause automatically when dropdown closes
+  examplesContainer.querySelectorAll('details.samp-vid').forEach((details) => {
+    const video = details.querySelector('video');
+    if (video) {
+      video.controls = true;
+      details.addEventListener('toggle', () => {
+        if (!details.open) {
+          video.pause();
+        }
+      });
+    }
+  });
 }
 
 if (reloadExamplesBtn) {
