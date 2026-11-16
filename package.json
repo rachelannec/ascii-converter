@@ -4,13 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.emu8086.asciiconverter",
+    "productName": "ASCII Converter",
+    "win": {
+      "target": "portable",
+      "icon": "assets/icon-ascii.ico"
+    }
   },
   "keywords": [],
-  "author": "",
+  "author": "Rachel",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "electron": "^45.3.3"
+    "electron": "^45.3.3",
+    "electron-builder": "^26.18.0"
   }
 }
