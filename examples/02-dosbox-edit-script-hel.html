@@ -1,0 +1,79 @@
+<!-- Atomic Example 2: Edit this file directly and click "Reload Examples" in the app -->
+<div class="example-card">
+  <div class="example-header">
+    <h3>2. Using DOSBox <code>edit</code> &amp; Input Redirection (<code>HEL.com</code> / <code>text2.com</code>)</h3>
+    <span class="category-badge">DOSBox Editor + debug &lt; file.asm</span>
+  </div>
+
+  <p class="example-desc">
+    Instead of typing line-by-line inside <code>debug</code>, write the <code>debug</code> commands in DOSBox <code>edit</code> (blue screen), save as <code>.asm</code> or <code>.txt</code>, and feed it into <code>debug</code> using <code>debug &lt; filename.asm</code>.
+  </p>
+
+  <div class="example-grid">
+    <div>
+      <h4>Activity Script (<code>HEL.com</code>)</h4>
+      <pre class="code-block">a 100
+mov ah, 02
+mov dx, 41
+int 21
+int 20
+
+rcx
+100
+n HEL.com
+w
+q</pre>
+      <p class="output-preview"><strong>Output when running <code>HEL</code>:</strong> <code>A</code> (since <code>41h</code> = ASCII <code>'A'</code>)</p>
+    </div>
+
+    <div>
+      <h4>Line-by-Line &amp; Workflow Explanation</h4>
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>Line / Command</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>a 100</code></td>
+            <td>Start assembling at memory address <code>100h</code>.</td>
+          </tr>
+          <tr>
+            <td><code>mov ah, 02</code></td>
+            <td>DOS function <code>02h</code>: display a single character.</td>
+          </tr>
+          <tr>
+            <td><code>mov dx, 41</code></td>
+            <td>Loads <code>0041h</code> into <code>DX</code> (sets <code>DL = 41h</code>, which is uppercase <code>'A'</code>).</td>
+          </tr>
+          <tr>
+            <td><code>int 21</code> / <code>int 20</code></td>
+            <td>Execute DOS interrupt <code>21h</code>, then terminate with <code>20h</code>.</td>
+          </tr>
+          <tr>
+            <td><em>[Blank Line]</em></td>
+            <td><strong>Important:</strong> Blank line (Enter with whitespace) exits <code>a 100</code> assemble mode back to the <code>-</code> prompt!</td>
+          </tr>
+          <tr>
+            <td><code>rcx</code> → <code>100</code></td>
+            <td>Sets register <code>CX = 0100h</code> (256 bytes) for file size.</td>
+          </tr>
+          <tr>
+            <td><code>n HEL.com</code> / <code>w</code> / <code>q</code></td>
+            <td>Sets file name to <code>HEL.com</code>, writes file to disk, and quits.</td>
+          </tr>
+          <tr>
+            <td><code>dir</code> / <code>type file.asm</code></td>
+            <td>Checks that the file is saved and displays its text contents.</td>
+          </tr>
+          <tr>
+            <td><code>debug &lt; file.asm</code></td>
+            <td>Feeds the script into <code>debug</code> to generate <code>HEL.com</code>, then type <code>HEL</code> to see the output.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

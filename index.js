@@ -3,8 +3,10 @@ const path = require('path');
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 600,
-    height: 400,
+    width: 960,
+    height: 720,
+    minWidth: 650,
+    minHeight: 500,
     icon: path.join(__dirname, 'assets/icon-ascii.ico'),
     webPreferences: {
       nodeIntegration: true,

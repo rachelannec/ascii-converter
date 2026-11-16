@@ -1,0 +1,71 @@
+<!-- Atomic Example 5: Edit this file directly and click "Reload Examples" in the app -->
+<div class="example-card">
+  <div class="example-header">
+    <h3>5. Displaying Multiple Strings with <code>.data</code> &amp; <code>AH=09h</code> (<code>"I love"</code> / <code>"CCIS"</code>)</h3>
+    <span class="category-badge">Activity — String Output</span>
+  </div>
+
+  <p class="example-desc">
+    Defines two <code>'$'</code>-terminated strings in the <code>.data</code> segment and prints them on separate lines using DOS function <code>09h</code> and <code>10, 13</code> (LF + CR in decimal).
+  </p>
+
+  <div class="example-grid">
+    <div>
+      <h4>Activity Source Code</h4>
+      <pre class="code-block">TITLE
+.model small
+.stack 0100H
+.data 
+string1 db 'I love', '$'
+string2 db 10, 13, 'CCIS', '$'
+.code
+mov ax, @data
+mov ds, ax
+lea dx, string1
+mov ah, 9
+int 21H
+lea dx, string2
+mov ah, 9
+int 21H
+mov ah, 4ch
+int 21H
+int 20H
+end</pre>
+      <p class="output-preview"><strong>Output:</strong><br><code>I love</code><br><code>CCIS</code></p>
+    </div>
+
+    <div>
+      <h4>Key Instructions Explained</h4>
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>Instruction</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>string1 db 'I love', '$'</code></td>
+            <td>Declares a byte array ending with <code>'$'</code> (<code>24h</code>), required by <code>INT 21h / AH=09h</code>.</td>
+          </tr>
+          <tr>
+            <td><code>string2 db 10, 13, 'CCIS', '$'</code></td>
+            <td>Prepends decimal <code>10</code> (<code>0Ah</code> Line Feed) and <code>13</code> (<code>0Dh</code> Carriage Return) so <code>CCIS</code> prints at the start of the next line.</td>
+          </tr>
+          <tr>
+            <td><code>mov ax, @data</code><br><code>mov ds, ax</code></td>
+            <td>Initializes the Data Segment register (<code>DS</code>) with the address of <code>.data</code>. (Cannot move an immediate address directly into <code>DS</code>!)</td>
+          </tr>
+          <tr>
+            <td><code>lea dx, string1</code></td>
+            <td><strong>Load Effective Address:</strong> puts the offset address of <code>string1</code> into <code>DX</code>.</td>
+          </tr>
+          <tr>
+            <td><code>mov ah, 9</code><br><code>int 21H</code></td>
+            <td>Calls DOS function <code>09h</code> to display the string at <code>DS:DX</code> until <code>'$'</code> is reached.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

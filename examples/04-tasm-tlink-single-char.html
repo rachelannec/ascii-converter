@@ -1,0 +1,81 @@
+<!-- Atomic Example 4: Edit this file directly and click "Reload Examples" in the app -->
+<div class="example-card">
+  <div class="example-header">
+    <h3>4. Writing <code>.ASM</code> in Text Editor &amp; Compiling with TASM / TLINK</h3>
+    <span class="category-badge">TASM &amp; TLINK Workflow</span>
+  </div>
+
+  <p class="example-desc">
+    Standard MASM/TASM assembly structure for displaying a single character, plus the DOSBox commands to assemble (<code>tasm</code>) into an object file (<code>.obj</code>) and link (<code>tlink</code>) into an executable (<code>.exe</code>).
+  </p>
+
+  <div class="example-grid">
+    <div>
+      <h4>Source Code (<code>text5.asm</code>)</h4>
+      <pre class="code-block">Title this program will display a single character
+dosseg
+.model small
+.stack 0100H
+.code
+    mov ah, 2       ; write char to standard output
+    mov dl, 41H     ; HEX value of char 'A'
+    int 21H         ; DOS function
+
+    mov ah, 4ch     ; exit - terminate with return code
+    int 21H
+    int 20H
+end</pre>
+    </div>
+
+    <div>
+      <h4>Directives &amp; TASM / TLINK Commands</h4>
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>Directive / Step</th>
+            <th>Explanation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>dosseg</code></td>
+            <td>Orders segments according to standard DOS convention (Code, Data, Stack).</td>
+          </tr>
+          <tr>
+            <td><code>.model small</code></td>
+            <td>Uses the <strong>small</strong> memory model (one code segment &le; 64KB, one data segment &le; 64KB).</td>
+          </tr>
+          <tr>
+            <td><code>.stack 0100H</code></td>
+            <td>Reserves <code>100h</code> (256 bytes) for the stack.</td>
+          </tr>
+          <tr>
+            <td><code>mov ah, 4ch</code> / <code>int 21H</code></td>
+            <td>Standard DOS termination for <code>.exe</code> programs (returns control to DOS).</td>
+          </tr>
+          <tr>
+            <td><strong>Step 1:</strong> <code>tasm text5.asm</code></td>
+            <td>Translates assembly source into machine code object file (<code>text5.obj</code>).</td>
+          </tr>
+          <tr>
+            <td><strong>Step 2:</strong> <code>dir text5.*</code></td>
+            <td>Verifies that <code>text5.obj</code> and <code>text5.asm</code> exist.</td>
+          </tr>
+          <tr>
+            <td><strong>Step 3:</strong> <code>tlink text5.obj</code></td>
+            <td>Turbo Linker creates the executable <code>text5.exe</code> (and <code>.map</code> file).</td>
+          </tr>
+          <tr>
+            <td><strong>Step 4:</strong> <code>text5.exe</code> (or <code>text5</code>)</td>
+            <td>Runs the executable in DOSBox and outputs <code>A</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="samp-vid">
+    <h4>Sample Video Walkthrough</h4>
+    <video controls preload="metadata" src="../assets/videos/USING-TEXT-EDITOR.mkv"></video>
+  </div>
+</div>

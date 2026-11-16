@@ -1,45 +1,713 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>x86 ASCII Converter</title>
+  <title>x86 ASCII Converter — DOSBox &amp; emu8086</title>
   <style>
-    body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #d4d4d4; }
-    textarea { 
-      width: 100%; 
-      height: 80px; 
-      padding: 10px; 
-      font-size: 16px; 
-      margin-bottom: 20px; 
-      background: #2d2d2d; 
-      color: #fff; 
-      border: 1px solid #555;
-      resize: vertical;
+    * {
+      box-sizing: border-box;
     }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { background: #007acc; color: white; padding: 8px; }
-    td { background: #252526; padding: 8px; border-bottom: 1px solid #333; }
-    .special-char { color: #ce9178; font-weight: bold; }
+    body {
+      font-family: 'Consolas', 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Header */
+    header {
+      background: #252526;
+      border-bottom: 1px solid #3c3c3c;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-title h2 {
+      margin: 0;
+      font-size: 18px;
+      color: #ffffff;
+    }
+    .badge {
+      background: #007acc;
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    /* Navigation & Action Bar */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #2d2d2d;
+      padding: 8px 20px;
+      border-bottom: 1px solid #3c3c3c;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: transparent;
+      color: #ccc;
+      border: 1px solid transparent;
+      padding: 7px 14px;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .tab-btn:hover {
+      background: #3a3d41;
+      color: #fff;
+    }
+    .tab-btn.active {
+      background: #007acc;
+      color: #fff;
+      font-weight: bold;
+    }
+    .spacer {
+      flex: 1;
+    }
+    .chart-btn {
+      background: #2ea043;
+      color: #ffffff;
+      border: none;
+      padding: 7px 14px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chart-btn:hover {
+      background: #3fb950;
+    }
+
+    /* Main Content Area */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Input Area & Controls */
+    .input-section {
+      background: #252526;
+      border: 1px solid #3c3c3c;
+      border-radius: 6px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+    .input-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .input-header label {
+      font-weight: bold;
+      color: #9cdcfe;
+      font-size: 14px;
+    }
+    .input-options {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12px;
+      color: #ccc;
+    }
+    .input-options label {
+      font-weight: normal;
+      color: #ccc;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    textarea {
+      width: 100%;
+      height: 75px;
+      padding: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #1e1e1e;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 4px;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #007acc;
+    }
+
+    /* Quick Insert Bar for Unprintable/Special Chars */
+    .quick-insert {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 12px;
+    }
+    .quick-insert span {
+      color: #888;
+      margin-right: 4px;
+    }
+    .chip-btn {
+      background: #333337;
+      color: #d4d4d4;
+      border: 1px solid #454545;
+      border-radius: 3px;
+      padding: 3px 8px;
+      font-family: inherit;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .chip-btn:hover {
+      background: #007acc;
+      color: #fff;
+      border-color: #007acc;
+    }
+    .chip-btn.clear-btn {
+      background: #5a1d1d;
+      border-color: #842929;
+      margin-left: auto;
+    }
+    .chip-btn.clear-btn:hover {
+      background: #a12626;
+    }
+
+    /* DOSBox & emu8086 Summary Outputs */
+    .dosbox-outputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .output-card {
+      background: #252526;
+      border: 1px solid #3c3c3c;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .output-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: #dcdcaa;
+      font-weight: bold;
+    }
+    .copy-btn {
+      background: #3c3c3c;
+      color: #fff;
+      border: none;
+      padding: 3px 8px;
+      font-family: inherit;
+      font-size: 11px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background: #007acc;
+    }
+    .code-box {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #ce9178;
+      word-break: break-all;
+      min-height: 34px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    th {
+      background: #007acc;
+      color: white;
+      padding: 9px 10px;
+      font-weight: bold;
+    }
+    td {
+      background: #252526;
+      padding: 8px 10px;
+      border-bottom: 1px solid #333;
+    }
+    tr:hover td {
+      background: #2a2d2e;
+    }
+    .special-char {
+      color: #ce9178;
+      font-weight: bold;
+    }
+    .hex-dosbox {
+      color: #4ec9b0;
+      font-weight: bold;
+    }
+    .hex-asm {
+      color: #dcdcaa;
+      font-weight: bold;
+    }
+    .asm-instr {
+      color: #9cdcfe;
+    }
+
+    /* Cheatsheet Styling */
+    .cheatsheet-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      padding: 8px 12px;
+      background: #252526;
+      border: 1px solid #555;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      border-radius: 4px;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #007acc;
+    }
+    .exam-tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .tip-card {
+      background: #252526;
+      border-left: 4px solid #007acc;
+      border-top: 1px solid #3c3c3c;
+      border-right: 1px solid #3c3c3c;
+      border-bottom: 1px solid #3c3c3c;
+      padding: 10px 12px;
+      border-radius: 4px;
+    }
+    .tip-card h4 {
+      margin: 0 0 6px 0;
+      color: #4ec9b0;
+      font-size: 13px;
+    }
+    .tip-card p {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #cccccc;
+    }
+    .category-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 11px;
+      border-radius: 3px;
+      background: #333337;
+      color: #9cdcfe;
+    }
+
+    /* Atomic Examples Tab Styling */
+    .examples-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #252526;
+      border: 1px solid #3c3c3c;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+    }
+    .examples-filter-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .example-card {
+      background: #252526;
+      border: 1px solid #3c3c3c;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+    .example-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #3c3c3c;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .example-header h3 {
+      margin: 0;
+      font-size: 15px;
+      color: #4ec9b0;
+    }
+    .example-file-tag {
+      font-size: 11px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .example-desc {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #cccccc;
+    }
+    .example-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    .example-grid h4 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      color: #dcdcaa;
+    }
+    .code-block {
+      background: #1e1e1e;
+      border: 1px solid #3c3c3c;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #ce9178;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .output-preview {
+      margin: 10px 0 0 0;
+      padding: 8px 10px;
+      background: #1e1e1e;
+      border-left: 3px solid #2ea043;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #d4d4d4;
+    }
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .mini-table th {
+      background: #333337;
+      color: #9cdcfe;
+      padding: 6px 8px;
+    }
+    .mini-table td {
+      background: #1e1e1e;
+      padding: 6px 8px;
+      border-bottom: 1px solid #2d2d2d;
+      vertical-align: top;
+      line-height: 1.4;
+    }
+    .samp-vid {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #3c3c3c;
+    }
+    .samp-vid h4 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      color: #dcdcaa;
+    }
+    .samp-vid video {
+      width: 100%;
+      max-height: 440px;
+      background: #000;
+      border: 1px solid #3c3c3c;
+      border-radius: 4px;
+      display: block;
+    }
+
+    /* Modal for ASCII Conversion Chart */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      z-index: 1000;
+      flex-direction: column;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-header {
+      background: #252526;
+      padding: 10px 20px;
+      border-bottom: 1px solid #3c3c3c;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 15px;
+      color: #fff;
+    }
+    .modal-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .modal-btn {
+      background: #3c3c3c;
+      color: #fff;
+      border: 1px solid #555;
+      padding: 5px 10px;
+      font-family: inherit;
+      font-size: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .modal-btn:hover {
+      background: #007acc;
+      border-color: #007acc;
+    }
+    .modal-btn.close {
+      background: #c72e2e;
+      border-color: #e03e3e;
+    }
+    .modal-body {
+      flex: 1;
+      overflow: auto;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+    }
+    .modal-body img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #444;
+      border-radius: 4px;
+      transition: width 0.15s ease;
+      background: #fff;
+    }
   </style>
 </head>
 <body>
-  <h2>x86 ASCII Converter</h2>
-  
-  <textarea id="charInput" placeholder="Type text, press Enter, Space, or Tab..."></textarea>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Character</th>
-        <th>Hex (MOV AL, ..h)</th>
-        <th>Decimal</th>
-        <th>Binary</th>
-      </tr>
-    </thead>
-    <tbody id="outputBody">
-      <!-- JavaScript will inject rows here -->
-    </tbody>
-  </table>
+  <header>
+    <div class="header-title">
+      <h2>x86 ASCII &amp; Hex Converter</h2>
+      <span class="badge">DOSBox &amp; emu8086</span>
+    </div>
+    <button id="openChartBtn" class="chart-btn" title="Display ASCII Conversion Chart from repo">
+      📊 View ASCII Conversion Chart
+    </button>
+  </header>
+
+  <nav class="nav-bar">
+    <button class="tab-btn active" data-tab="tab-converter">1. ASCII ⇄ DOSBox Hex Converter</button>
+    <button class="tab-btn" data-tab="tab-cheatsheet">2. Uncommon ASCII &amp; Exam Cheatsheet</button>
+    <button class="tab-btn" data-tab="tab-examples">3. Discussion Examples</button>
+  </nav>
+
+  <main>
+    <!-- TAB 1: CONVERTER -->
+    <section id="tab-converter" class="tab-content active">
+      <div class="input-section">
+        <div class="input-header">
+          <label for="charInput">Input Text / Characters:</label>
+          <div class="input-options">
+            <label title="In DOSBox and emu8086, pressing Enter in a string requires both Carriage Return (0Dh) and Line Feed (0Ah)">
+              <input type="checkbox" id="crlfToggle" checked>
+              Treat Enter as DOS CR+LF (0Dh, 0Ah)
+            </label>
+            <label title="Append '$' (24h) to DOSBox string definitions for INT 21h / AH=09h">
+              <input type="checkbox" id="dollarToggle" checked>
+              Append '$' (24h) terminator in snippets
+            </label>
+          </div>
+        </div>
+
+        <textarea id="charInput" placeholder="Type text, press Enter, Space, or Tab... or use Quick Insert below for control characters"></textarea>
+
+        <div class="quick-insert">
+          <span>Quick Insert Special ASCII:</span>
+          <button class="chip-btn" data-charcode="13" title="Carriage Return (13 / 0Dh)">+ CR (0Dh)</button>
+          <button class="chip-btn" data-charcode="10" title="Line Feed (10 / 0Ah)">+ LF (0Ah)</button>
+          <button class="chip-btn" data-charcode="9" title="Horizontal Tab (9 / 09h)">+ TAB (09h)</button>
+          <button class="chip-btn" data-charcode="27" title="Escape (27 / 1Bh)">+ ESC (1Bh)</button>
+          <button class="chip-btn" data-charcode="8" title="Backspace (8 / 08h)">+ BS (08h)</button>
+          <button class="chip-btn" data-charcode="7" title="Bell / Beep (7 / 07h)">+ BEL (07h)</button>
+          <button class="chip-btn" data-charcode="32" title="Space (32 / 20h)">+ SPACE (20h)</button>
+          <button class="chip-btn" data-charcode="36" title="DOS String Terminator '$' (36 / 24h)">+ '$' (24h)</button>
+          <button class="chip-btn" data-charcode="0" title="Null Character (0 / 00h)">+ NUL (00h)</button>
+          <button id="clearInputBtn" class="chip-btn clear-btn">Clear</button>
+        </div>
+      </div>
+
+      <!-- DOSBox & emu8086 Ready-to-Use Hex Outputs -->
+      <div class="dosbox-outputs">
+        <div class="output-card">
+          <div class="output-card-header">
+            <span>DOSBox <code>debug</code> Script (<code>a 100</code> / <code>mov dx, ..</code>)</span>
+            <button class="copy-btn" data-copy-target="dosboxScriptOut">Copy</button>
+          </div>
+          <div id="dosboxScriptOut" class="code-box" style="white-space: pre-wrap; max-height: 110px; overflow-y: auto;">--</div>
+        </div>
+
+        <div class="output-card">
+          <div class="output-card-header">
+            <span>DOSBox <code>debug</code> Hex Bytes (e.g. <code>-e 0100 ...</code>)</span>
+            <button class="copy-btn" data-copy-target="dosboxDebugOut">Copy</button>
+          </div>
+          <div id="dosboxDebugOut" class="code-box">--</div>
+        </div>
+
+        <div class="output-card">
+          <div class="output-card-header">
+            <span>MASM / TASM / emu8086 <code>DB</code> Hex Array</span>
+            <button class="copy-btn" data-copy-target="asmDbOut">Copy</button>
+          </div>
+          <div id="asmDbOut" class="code-box">--</div>
+        </div>
+      </div>
+
+      <!-- Per-Character Breakdown Table -->
+      <table>
+        <thead>
+          <tr>
+            <th>Offset</th>
+            <th>Character</th>
+            <th>DOSBox Hex (Raw)</th>
+            <th>ASM Hex (MASM/emu8086)</th>
+            <th>DOSBox / ASM Instruction</th>
+            <th>Decimal</th>
+            <th>Binary (8-bit)</th>
+          </tr>
+        </thead>
+        <tbody id="outputBody">
+          <tr>
+            <td colspan="7" style="text-align: center; color: #777; padding: 18px;">
+              Type or insert characters above to convert into DOSBox &amp; emu8086 hexadecimal.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- TAB 2: UNCOMMON ASCII & EXAM CHEATSHEET -->
+    <section id="tab-cheatsheet" class="tab-content">
+      <div class="exam-tips-grid">
+        <div class="tip-card">
+          <h4>1. Leading Zero Rule in MASM / emu8086</h4>
+          <p>Hex values starting with <code>A–F</code> <strong>must</strong> have a leading <code>0</code> (e.g., <code>0Ah</code>, <code>0Dh</code>, <code>0FFh</code>) so the assembler doesn't confuse them with labels or registers like <code>AH</code> or <code>DH</code>. In DOSBox <code>debug</code>, everything is already base-16 so write raw hex (<code>0A</code>, <code>0D</code>, <code>FF</code>) without <code>h</code>.</p>
+        </div>
+        <div class="tip-card">
+          <h4>2. CR (0Dh) vs. LF (0Ah) Cursor Trap</h4>
+          <p><code>0Dh</code> (Carriage Return) moves the cursor to <strong>column 0 of the same line</strong> (overwriting text if no LF!). <code>0Ah</code> (Line Feed) moves the cursor <strong>down 1 row in the same column</strong>. You need both <code>0Dh, 0Ah</code> for a full new line! Also, <code>INT 21h / AH=01h</code> returns <code>0Dh</code> in <code>AL</code> when Enter is pressed.</p>
+        </div>
+        <div class="tip-card">
+          <h4>3. Case &amp; Digit Conversion Tricks</h4>
+          <p><strong>Digit ⇄ ASCII:</strong> <code>'0'–'9'</code> is <code>30h–39h</code> (48–57). Add <code>30h</code> (or <code>OR AL, 30h</code>) to convert a number 0–9 to ASCII; subtract <code>30h</code> (or <code>AND AL, 0Fh</code>) for ASCII to number.<br>
+          <strong>Upper ⇄ Lower:</strong> <code>'A'</code>=<code>41h</code> (65), <code>'a'</code>=<code>61h</code> (97). Difference is <code>20h</code> (32): <code>ADD/OR AL, 20h</code> → lowercase; <code>SUB AL, 20h</code> / <code>AND AL, 0DFh</code> → uppercase.</p>
+        </div>
+        <div class="tip-card">
+          <h4>4. String Terminators: '$' (24h) vs NUL (00h)</h4>
+          <p>DOS <code>INT 21h / AH=09h</code> prints until it hits <code>'$'</code> (<code>24h</code> / 36). If you forget <code>'$'</code>, it prints garbage from memory! Null-terminated strings use <code>00h</code> instead.</p>
+        </div>
+      </div>
+
+      <div class="cheatsheet-controls">
+        <input type="text" id="cheatsheetSearch" class="search-input" placeholder="Search uncommon ASCII (e.g., carriage return, beep, backspace, 0Dh, 24h, box, escape)...">
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name / Symbol</th>
+            <th>DOSBox Hex</th>
+            <th>ASM Hex</th>
+            <th>Decimal</th>
+            <th>Binary</th>
+            <th>Category</th>
+            <th>Exam Notes &amp; DOSBox / emu8086 Behavior</th>
+          </tr>
+        </thead>
+        <tbody id="cheatsheetBody">
+          <!-- Injected by renderer.js -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- TAB 3: DISCUSSION EXAMPLES (Loaded dynamically from atomic files in examples/) -->
+    <section id="tab-examples" class="tab-content">
+      <div class="examples-toolbar">
+        <div id="examplesFilterBar" class="examples-filter-group">
+          <span style="font-size: 12px; color: #9cdcfe; font-weight: bold;">Atomic Files (<code>examples/</code>):</span>
+        </div>
+        <button id="reloadExamplesBtn" class="copy-btn" style="padding: 5px 10px; font-size: 12px;">
+          🔄 Reload Examples
+        </button>
+      </div>
+      <div id="examplesContainer">
+        <!-- Loaded from examples/*.html by renderer.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ASCII Conversion Chart Modal -->
+  <div id="chartModal" class="modal-overlay">
+    <div class="modal-header">
+      <h3>ASCII Conversion Chart (Repo Reference)</h3>
+      <div class="modal-controls">
+        <button id="zoomOutBtn" class="modal-btn">➖ Zoom Out</button>
+        <button id="zoomResetBtn" class="modal-btn">100% Fit</button>
+        <button id="zoomInBtn" class="modal-btn">➕ Zoom In</button>
+        <button id="closeChartBtn" class="modal-btn close">✕ Close (ESC)</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <img id="chartImage" src="assets/ASCII-Conversion-Chart.jpg" alt="ASCII Conversion Chart">
+    </div>
+  </div>
 
   <script src="renderer.js"></script>
 </body>

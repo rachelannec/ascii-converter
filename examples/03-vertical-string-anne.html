@@ -1,0 +1,110 @@
+<!-- Atomic Example 3: Edit this file directly and click "Reload Examples" in the app -->
+<div class="example-card">
+  <div class="example-header">
+    <h3>3. Vertical String Printing with Line Feed (<code>ANNE.com</code> → <code>"BSCS3-3"</code>)</h3>
+    <span class="category-badge">Activity — DOSBox Script</span>
+  </div>
+
+  <p class="example-desc">
+    Displays <code>BSCS3-3</code> vertically/diagonally by alternating each character with <code>mov dx, a</code> (<code>0Ah</code> = Line Feed). Notice <code>AH</code> stays <code>02</code> throughout, so only <code>DX</code> needs to change before each <code>int 21</code>.
+  </p>
+
+  <div class="example-grid">
+    <div>
+      <h4>Activity Script (<code>ANNE.com</code>)</h4>
+      <pre class="code-block">a 100
+mov ah, 02
+mov dx, 42
+int 21
+mov dx, a
+int 21
+mov dx, 53
+int 21
+mov dx, a
+int 21
+mov dx, 43
+int 21
+mov dx, a
+int 21
+mov dx, 53
+int 21
+mov dx, a
+int 21
+mov dx, 33
+int 21
+mov dx, a
+int 21
+mov dx, 2d
+int 21
+mov dx, a
+int 21
+mov dx, 33
+int 21
+int 20
+
+rcx
+100
+n ANNE.com
+w
+q</pre>
+    </div>
+
+    <div>
+      <h4>Hex-to-ASCII Breakdown</h4>
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>Instruction</th>
+            <th>Hex</th>
+            <th>ASCII Character</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>mov dx, 42</code></td>
+            <td><code>42h</code> (66)</td>
+            <td><code>'B'</code></td>
+          </tr>
+          <tr>
+            <td><code>mov dx, a</code></td>
+            <td><code>0Ah</code> (10)</td>
+            <td><code>[LF]</code> Line Feed (moves cursor down 1 line)</td>
+          </tr>
+          <tr>
+            <td><code>mov dx, 53</code></td>
+            <td><code>53h</code> (83)</td>
+            <td><code>'S'</code></td>
+          </tr>
+          <tr>
+            <td><code>mov dx, 43</code></td>
+            <td><code>43h</code> (67)</td>
+            <td><code>'C'</code></td>
+          </tr>
+          <tr>
+            <td><code>mov dx, 53</code></td>
+            <td><code>53h</code> (83)</td>
+            <td><code>'S'</code></td>
+          </tr>
+          <tr>
+            <td><code>mov dx, 33</code></td>
+            <td><code>33h</code> (51)</td>
+            <td><code>'3'</code></td>
+          </tr>
+          <tr>
+            <td><code>mov dx, 2d</code></td>
+            <td><code>2Dh</code> (45)</td>
+            <td><code>'-'</code> (Hyphen / Minus)</td>
+          </tr>
+          <tr>
+            <td><code>mov dx, 33</code></td>
+            <td><code>33h</code> (51)</td>
+            <td><code>'3'</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="output-preview">
+        <strong>Exam Tip:</strong> Because only <code>0Ah</code> (LF) is printed between letters without <code>0Dh</code> (CR), the cursor moves down 1 row after each character! To align strictly to column 0, pair <code>0Dh</code> (CR) with <code>0Ah</code> (LF).
+      </p>
+    </div>
+  </div>
+</div>

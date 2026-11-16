@@ -1,0 +1,84 @@
+<!-- Atomic Example 1: Edit this file directly and click "Reload Examples" in the app -->
+<div class="example-card">
+  <div class="example-header">
+    <h3>1. Running a Program Directly in DOSBox <code>debug</code> (<code>ex1.com</code>)</h3>
+    <span class="category-badge">DOSBox Command Prompt</span>
+  </div>
+
+  <p class="example-desc">
+    Type commands directly inside DOSBox <code>debug</code> to assemble instructions into memory starting at offset <code>0100h</code>, calculate byte size using <code>h</code>, and save as a <code>.com</code> executable.
+  </p>
+
+  <div class="example-grid">
+    <div>
+      <h4>Code / Commands Typed in <code>debug</code></h4>
+      <pre class="code-block">-a
+072A:0100 mov ah, 02
+072A:0102 mov dl, 61
+072A:0104 int 21
+072A:0106 int 20
+072A:0108 [Press Enter]
+-h 0108 0100
+0208  0008
+-r cx
+CX 0000 :8
+-n ex1.com
+-w
+Writing 0008 bytes
+-q
+
+C:\&gt;ex1
+a</pre>
+    </div>
+
+    <div>
+      <h4>Line-by-Line Explanation</h4>
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>Command / Instruction</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>a</code></td>
+            <td>Starts <strong>Assemble</strong> mode at default offset <code>0100h</code>.</td>
+          </tr>
+          <tr>
+            <td><code>mov ah, 02</code></td>
+            <td>Selects DOS function <code>02h</code> (display single character on screen).</td>
+          </tr>
+          <tr>
+            <td><code>mov dl, 61</code></td>
+            <td>Loads hex <code>61h</code> (ASCII for lowercase <code>'a'</code>) into <code>DL</code>.</td>
+          </tr>
+          <tr>
+            <td><code>int 21</code></td>
+            <td>Calls DOS Interrupt <code>21h</code> to execute function <code>02h</code>.</td>
+          </tr>
+          <tr>
+            <td><code>int 20</code></td>
+            <td>Calls Interrupt <code>20h</code> to terminate the <code>.com</code> program.</td>
+          </tr>
+          <tr>
+            <td><code>h 0108 0100</code></td>
+            <td>Calculates hex <strong>sum</strong> (<code>0208</code>) and <strong>difference</strong> (<code>0008</code>) between end address <code>0108</code> and start address <code>0100</code>.</td>
+          </tr>
+          <tr>
+            <td><code>r cx</code> → <code>8</code></td>
+            <td>Views/modifies <code>CX</code> register and sets file size to <code>8</code> bytes.</td>
+          </tr>
+          <tr>
+            <td><code>n ex1.com</code></td>
+            <td>Names the output file <code>ex1.com</code>.</td>
+          </tr>
+          <tr>
+            <td><code>w</code> / <code>q</code></td>
+            <td><strong>Writes</strong> (saves) the 8 bytes to disk, then <strong>quits</strong> <code>debug</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

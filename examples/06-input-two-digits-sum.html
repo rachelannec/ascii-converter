@@ -1,0 +1,89 @@
+<!-- Atomic Example 6: Edit this file directly and click "Reload Examples" in the app -->
+<div class="example-card">
+  <div class="example-header">
+    <h3>6. User Input &amp; Single-Digit Addition (<code>"The sum is $"</code>)</h3>
+    <span class="category-badge">Activity — Input &amp; Arithmetic</span>
+  </div>
+
+  <p class="example-desc">
+    Clears the screen with BIOS <code>INT 10h</code>, reads two single-digit numbers from the keyboard using <code>INT 21h / AH=01h</code>, adds them, subtracts <code>48</code> (<code>30h</code>) to fix the ASCII offset, and displays the sum.
+  </p>
+
+  <div class="example-grid">
+    <div>
+      <h4>Activity Source Code</h4>
+      <pre class="code-block">TITLE
+.model small
+.stack 0100H
+.data
+string1 db 10,13, 'Enter first number: $'
+string2 db 10,13, 'Enter second number: $'
+string3 db 10,13, 'The sum is $'
+.code
+mov ax, 03h
+int 10h
+mov ax, @data
+mov ds, ax
+lea dx, string1
+mov ah, 09
+int 21h
+mov ah, 1
+int 21h
+mov bl, al
+lea dx, string2
+mov ah, 09
+int 21h
+mov ah, 1
+int 21h
+mov bh, al
+add bl, bh
+sub bl, 48
+lea dx, string3
+mov ah, 09
+int 21h
+mov ah, 02
+mov dl, bl
+int 21h
+mov ah, 4ch
+int 21h
+end</pre>
+    </div>
+
+    <div>
+      <h4>Step-by-Step Logic &amp; ASCII Math</h4>
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>Instruction</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>mov ax, 03h</code><br><code>int 10h</code></td>
+            <td>Sets BIOS video mode <code>03h</code> (80&times;25 16-color text), which <strong>clears the screen</strong>.</td>
+          </tr>
+          <tr>
+            <td><code>mov ah, 1</code><br><code>int 21h</code></td>
+            <td>Reads a single character from keyboard with echo; stores its <strong>ASCII code in <code>AL</code></strong>.</td>
+          </tr>
+          <tr>
+            <td><code>mov bl, al</code> / <code>mov bh, al</code></td>
+            <td>Saves the first input character in <code>BL</code> and the second in <code>BH</code> so future <code>INT 21h</code> calls don't overwrite them.</td>
+          </tr>
+          <tr>
+            <td><code>add bl, bh</code><br><code>sub bl, 48</code></td>
+            <td><strong>Why subtract 48 (<code>30h</code>)?</strong><br>
+            Suppose you type <code>'2'</code> (ASCII <code>50</code>) and <code>'3'</code> (ASCII <code>51</code>):<br>
+            <code>50 + 51 = 101</code>.<br>
+            Subtracting <code>48</code> (<code>'0'</code>) gives <code>101 - 48 = 53</code>, which is the exact ASCII code for <code>'5'</code>!</td>
+          </tr>
+          <tr>
+            <td><code>mov ah, 02</code><br><code>mov dl, bl</code><br><code>int 21h</code></td>
+            <td>Moves the resulting ASCII sum from <code>BL</code> into <code>DL</code> and prints it to the screen.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
