@@ -12,11 +12,11 @@
     "productName": "ASCII Converter",
     "win": {
       "target": "portable",
-      "icon": "assets/icon-ascii.ico"
+      "icon": "assets/icon-ascii.png"
     }
   },
   "keywords": [],
-  "author": "Rachel",
+  "author": "choii7109",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
