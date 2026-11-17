@@ -505,7 +505,7 @@ function loadAtomicExamples() {
       .replace(/(src|href)=(["'])\.\.\/assets\//g, '$1=$2assets/');
     contentHtml += `
       <div class="atomic-example-wrapper">
-        <div class="example-file-tag">📄 Atomic File: <code>examples/${escapeHtml(file)}</code></div>
+        <div class="example-file-tag">Atomic File: <code>examples/${escapeHtml(file)}</code></div>
         ${rawHtml}
       </div>`;
   });
