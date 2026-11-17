@@ -1,17 +1,17 @@
 <!-- Atomic Example 2: Edit this file directly and click "Reload Examples" in the app -->
 <div class="example-card">
   <div class="example-header">
-    <h3>2. Using DOSBox <code>edit</code> &amp; Input Redirection (<code>HEL.com</code> / <code>text2.com</code>)</h3>
+    <h3>2. Using DOSBox <code>edit</code> &amp; Input Redirection (<code>file.com</code>)</h3>
     <span class="category-badge">DOSBox Editor + debug &lt; file.asm</span>
   </div>
 
   <p class="example-desc">
-    Instead of typing line-by-line inside <code>debug</code>, write the <code>debug</code> commands in DOSBox <code>edit</code> (blue screen), save as <code>.asm</code> or <code>.txt</code>, and feed it into <code>debug</code> using <code>debug &lt; filename.asm</code>.
+    Instead of typing line-by-line inside <code>debug</code>, write the <code>debug</code> commands in DOSBox <code>edit</code> (blue screen), save as <code>text2.asm</code> (or <code>.txt</code>), and feed it into <code>debug</code> using <code>debug &lt; text2.asm</code>.
   </p>
 
   <div class="example-grid">
     <div>
-      <h4>Activity Script (<code>HEL.com</code>)</h4>
+      <h4>Activity Script (<code>text2.asm</code>)</h4>
       <pre class="code-block">a 100
 mov ah, 02
 mov dx, 41
@@ -20,10 +20,10 @@ int 20
 
 rcx
 100
-n HEL.com
+n text2.asm
 w
 q</pre>
-      <p class="output-preview"><strong>Output when running <code>HEL</code>:</strong> <code>A</code> (since <code>41h</code> = ASCII <code>'A'</code>)</p>
+      <p class="output-preview"><strong>Output when running <code>text2</code>:</strong> <code>A</code> (since <code>41h</code> = ASCII <code>'A'</code>)</p>
     </div>
 
     <div>
@@ -61,16 +61,16 @@ q</pre>
             <td>Sets register <code>CX = 0100h</code> (256 bytes) for file size.</td>
           </tr>
           <tr>
-            <td><code>n HEL.com</code> / <code>w</code> / <code>q</code></td>
-            <td>Sets file name to <code>HEL.com</code>, writes file to disk, and quits.</td>
+            <td><code>n text5.asm</code> / <code>w</code> / <code>q</code></td>
+            <td>Sets file name to <code>text5.asm</code>, writes file to disk, and quits.</td>
           </tr>
           <tr>
-            <td><code>dir</code> / <code>type file.asm</code></td>
+            <td><code>dir</code> / <code>type text2.asm</code></td>
             <td>Checks that the file is saved and displays its text contents.</td>
           </tr>
           <tr>
-            <td><code>debug &lt; file.asm</code></td>
-            <td>Feeds the script into <code>debug</code> to generate <code>HEL.com</code>, then type <code>HEL</code> to see the output.</td>
+            <td><code>debug &lt; text2.asm</code></td>
+            <td>Feeds the script into <code>debug</code> to generate <code>text2.com</code>, then type <code>text2</code> to see the output.</td>
           </tr>
         </tbody>
       </table>
@@ -78,7 +78,7 @@ q</pre>
   </div>
 
   <details class="samp-vid">
-    <summary>Sample Video Walkthrough</summary>
+    <summary>Sample Video Walkthrough (Different from the example code above)</summary>
     <div class="samp-vid-body">
       <video controls preload="metadata" src="../assets/videos/EDIT-BLUE-SCREEN.mkv"></video>
     </div>

@@ -142,7 +142,7 @@ function updateConverter() {
     scriptLines.push(`mov dx, ${shortHex}`);
     scriptLines.push('int 21');
   });
-  scriptLines.push('int 20', '', 'rcx', '100', 'n PROG.com', 'w', 'q');
+  scriptLines.push('int 20', '', 'rcx', '100', 'n file.com', 'w', 'q');
   dosboxScriptOut.textContent = scriptLines.join('\n');
 }
 

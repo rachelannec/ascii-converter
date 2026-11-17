@@ -11,7 +11,7 @@
 
   <div class="example-grid">
     <div>
-      <h4>Source Code (<code>text5.asm</code>)</h4>
+      <h4>Source Code (<code>file.asm</code>)</h4>
       <pre class="code-block">Title this program will display a single character
 dosseg
 .model small
@@ -54,19 +54,19 @@ end</pre>
             <td>Standard DOS termination for <code>.exe</code> programs (returns control to DOS).</td>
           </tr>
           <tr>
-            <td><strong>Step 1:</strong> <code>tasm text5.asm</code></td>
-            <td>Translates assembly source into machine code object file (<code>text5.obj</code>).</td>
+            <td><strong>Step 1:</strong> <code>tasm file.asm</code></td>
+            <td>Translates assembly source into machine code object file (<code>file.obj</code>).</td>
           </tr>
           <tr>
-            <td><strong>Step 2:</strong> <code>dir text5.*</code></td>
-            <td>Verifies that <code>text5.obj</code> and <code>text5.asm</code> exist.</td>
+            <td><strong>Step 2:</strong> <code>dir file.*</code></td>
+            <td>Verifies that <code>file.obj</code> and <code>file.asm</code> exist.</td>
           </tr>
           <tr>
-            <td><strong>Step 3:</strong> <code>tlink text5.obj</code></td>
-            <td>Turbo Linker creates the executable <code>text5.exe</code> (and <code>.map</code> file).</td>
+            <td><strong>Step 3:</strong> <code>tlink file.obj</code></td>
+            <td>Turbo Linker creates the executable <code>file.exe</code> (and <code>.map</code> file).</td>
           </tr>
           <tr>
-            <td><strong>Step 4:</strong> <code>text5.exe</code> (or <code>text5</code>)</td>
+            <td><strong>Step 4:</strong> <code>file.exe</code> (or <code>file</code>)</td>
             <td>Runs the executable in DOSBox and outputs <code>A</code>.</td>
           </tr>
         </tbody>
