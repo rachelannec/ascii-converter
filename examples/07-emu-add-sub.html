@@ -1,0 +1,42 @@
+<!-- Example 7 -->
+<div class="example-card">
+  <div class="example-header">
+    <h3>7. Add and subtract Using emu8086</h3>
+    <span class="category-badge">Activity — Using emu8086</span>
+  </div>
+
+  <p class="example-desc">
+    The program add and subtract two values and display the sum at <code>cx</code> while the difference at  <code>dx</code>.
+  </p>
+
+  <div class="example-grid">
+    <div>
+      <h4>Activity Source Code (<code>ADSUB.asm</code>)</h4>
+      <pre class="code-block">mov ax, 5h ;move 5 to ax
+mov bx, 3h ;move 3 to bx
+           
+mov cx, ax ;move ax (5) to cx
+add cx, bx ;add cx (5) to bx (3)
+           ;result will be on cx <-8
+
+mov dx, ax ;move ax (5) to dx
+sub dx, bx ;subtract dx (5) to bx (3)
+           ;result will be on dx <- 2</pre>
+    </div>
+
+    <div>
+      <h4>Logic</h4>
+        <p class="output-preview">
+            The program adds the value in <code>ax</code> to the value in <code>bx</code> and stores the result in <code>cx</code>, by first putting the value of <code>ax</code> to <code>cx</code>. 
+            </br></br>
+            Same with subtraction, put first the value of <code>ax</code> to <code>dx</code>, then subtract it to the value of <code>bx</code>, the difference will then be stored in <code>dx</code>.
+        </p>
+    </div>
+  </div>
+  <details class="samp-vid">
+    <summary>Sample Video Walkthrough</summary>
+    <div class="samp-vid-body">
+      <video controls preload="metadata" src="../assets/videos/EMU8086-ADD-SUB.mkv"></video>
+    </div>
+  </details>
+</div>
