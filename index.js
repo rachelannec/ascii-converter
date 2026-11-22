@@ -21,6 +21,13 @@ function createWindow () {
 
 app.whenReady().then(createWindow);
 
+// Automatically reload the window when files change during development
+if (!app.isPackaged) {
+  require('electron-reload')(__dirname, {
+    electron: path.join(__dirname, 'node_modules', '.bin', 'electron.cmd')
+  });
+}
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
