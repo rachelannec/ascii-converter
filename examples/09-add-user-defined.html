@@ -1,0 +1,139 @@
+<!-- Example 9 -->
+<div class="example-card">
+  <div class="example-header">
+    <h3>9. Add 3 digits and display the sum.</h3>
+    <span class="category-badge">Activity — User-Defined</span>
+  </div>
+
+  <p class="example-desc">
+    This program asks for three single-digit numbers, adds them together, and displays the two-digit sum.
+  </p>
+
+  <div class="example-grid">
+    <div>
+      <h4>Activity Source Code (<code>ADD3.asm</code>)</h4>
+      <pre class="code-block">
+.model small
+.stack 100h
+
+.data 
+    num1 db 0dh, 0ah, 'Enter 1st number: $'
+    num2 db 0dh, 0ah, 'Enter 2nd number: $' 
+    num3 db 0dh, 0ah, 'Enter 3rd number: $'
+    sum db 0dh, 0ah, 'Sum: $`\'
+    
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+        
+    ; -- 1st number
+    mov ah, 09h
+    lea dx, num1
+    int 21h
+    
+    mov ah, 01h
+    int 21h
+    sub al, 30h     ;convert ascii to actual number 
+    mov ah, 0h      ;clear ah so ax hold input number
+    mov bx, ax      ;move ax to bx - 1st num
+    
+    ; -- 2nd number
+    mov ah, 09h
+    lea dx, num2
+    int 21h
+    
+    mov ah, 01h
+    int 21h
+    sub al, 30h
+    mov ah, 0h  
+    mov cx, ax   ; move ax to cx - 2nd num
+    
+    ; -- 3rd number
+    mov ah, 09h
+    lea dx, num3
+    int 21h
+    
+    mov ah, 01h
+    int 21h
+    sub al, 30h
+    mov ah, 0h      ; clear ah so ax hold input number, ax - 3rd
+
+    add ax, bx      ; add ax (3rd num) and bx (1st sum) -> result is ax
+    add cx, ax      ; add cx (2nd num) and ax -> resutl in cx
+    ; FINAL RESULT IN cx 
+    
+    ; -- print Sum:
+    mov ah, 09h
+    lea dx, sum
+    int 21h
+    
+    ; -- split (for 2digit sum)
+    mov ax, cx      ; move cx to ax
+    aam
+    add ax, 3030h
+    mov bx, ax
+    
+    mov ah, 2h
+    mov dl, bh
+    int 21h
+    mov dl, bl
+    int 21h    
+    
+    
+    ; exit
+    mov ah, 4ch
+    int 21h
+
+main endp
+end main
+
+
+
+; --- FIXED VALUE
+;mov ax, 5h ;move 5 to ax
+;mov bx, 3h ;move 3 to bx
+;mov cx, 2h ;move 2 to cx
+           
+
+;add ax, bx ;add ax (5) to bx (3)
+           ;result will be on ax <-8 
+;add cx, ax ;add cx (2) to ax (8)
+           ;result will be on cx <- 10 or A
+
+      </pre>
+    </div>
+
+    <div>
+      <h4>Logic</h4>
+        <div class="output-preview">
+           <h4>1. Setup & Text (.model, .stack, .data)</h4> 
+           <ul><li>Sets up memory and stores the prompt messages (num1, num2, num3, sum). 0dh, 0ah creates a new line, and $ marks the end of each text string.</li></ul>
+
+           <h4>2. Load Data (mov ax, @data / mov ds, ax)</h4> 
+           <ul><li>Connects the .data section so the program can access your text prompts.</li></ul>
+
+           <h4>3. Get 1st Number (saved in bx)</h4> 
+           <ul><li>Prints "Enter 1st number: ", reads one keystroke (int 21h), subtracts 30h to turn the typed character into a real number, and stores it in bx.</li></ul>
+
+           <h4>4. Get 2nd Number (saved in cx)</h4> 
+           <ul><li>Prints "Enter 2nd number: ", reads the second keystroke, converts it to a real number, and stores it in cx.</li></ul>
+
+           <h4>5. Get 3rd Number & Add Everything (ax, bx, cx)</h4> 
+           <ul><li>Prints "Enter 3rd number: ", reads the third keystroke into ax, then adds all three numbers together (ax + bx, then + cx), leaving the final total in cx.</li></ul>
+
+           <h4>6. Split & Print the 2-Digit Sum (aam)</h4> 
+           <ul><li>Prints "Sum: ", moves the total into ax, and uses aam to split it into tens (ah) and ones (al). It adds 3030h to turn both digits back into printable characters and prints them one by one (bh, then bl).</li></ul>
+
+           <h4>7. Exit (mov ah, 4ch)</h4> 
+           <ul><li>Safely closes the program and returns to DOS.</li></ul>
+        </div>
+    </div>
+  </div>
+  <details class="samp-vid">
+    <summary>Sample Video Walkthrough</summary>
+    <div class="samp-vid-body">
+      <video controls preload="metadata" src="../assets/videos/ADD-3-USER-DEFINED.mkv"></video>
+    </div>
+  </details>
+</div>
