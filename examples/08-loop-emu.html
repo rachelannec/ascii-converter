@@ -1,0 +1,90 @@
+<!-- Example 7 -->
+<div class="example-card">
+  <div class="example-header">
+    <h3>8. Loop strings in emu8086</h3>
+    <span class="category-badge">Activity — Loop</span>
+  </div>
+
+  <p class="example-desc">
+    A program that prints "I LOVE CCIS" five times.
+  </p>
+
+  <div class="example-grid">
+    <div>
+      <h4>Activity Source Code (<code>LOOP.asm</code>)</h4>
+      <pre class="code-block">.MODEL SMALL            ; define memory model, allows one code and data segment
+.STACK 100H
+.DATA 
+    MSG DB 'I LOVE CCIS', 0DH, 0AH, '$' ;0DH - CARRIAGE RETURN, 0AH - LINE FEED
+    
+
+.CODE 
+    MAIN PROC           ; indicate beginning
+        MOV AX, @DATA   ; LOAD THE ADDRESS OF DATA SEGMENT 
+        MOV DS, AX    
+        MOV CX, 5       ; CX, GENERAL PUPOSE REGISTER FOR LOOP COUNTER - 5 TIMES
+    DISPLAY:
+        MOV AH, 09H
+        LEA DX, MSG     ; LOAD EFFECTIVE ADDRESS
+        INT 21H
+        LOOP DISPLAY
+        MOV AH, 4CH     ; DOS FUNCTION TERMINATES PROGRAM
+        INT 21H         ; INTERRUPT
+
+MAIN ENDP
+END MAIN     
+
+; .ASM <- ACTIVITY 7</pre>
+        <p class="output-preview"><strong>Output:</strong><br>
+            <code>I LOVE CCIS</code> <br>
+            <code>I LOVE CCIS</code> <br>
+            <code>I LOVE CCIS</code> <br>
+            <code>I LOVE CCIS</code> <br>
+            <code>I LOVE CCIS</code>
+        </p>
+    </div>
+
+    <div>
+      <h4>Logic</h4>
+        <div class="output-preview">
+           <h4>1. Memory &amp; Data Setup</h4>
+            <ul>
+                <li><strong><code>.MODEL SMALL</code></strong>: Sets the memory layout to allow one 64 KB segment for code and one 64 KB segment for data.</li>
+                <li><strong><code>.STACK 100H</code></strong>: Reserves 256 bytes (<code>100H</code> in hexadecimal) of memory for the program stack.</li>
+                <li><strong><code>.DATA</code></strong>: Marks the beginning of the data segment where variables are stored.</li>
+                <li>
+                    <strong><code>MSG DB 'I LOVE CCIS', 0DH, 0AH, '$'</code></strong>: Defines a byte array (<code>DB</code> = Define Byte) named <code>MSG</code> containing:
+                    <ul>
+                        <li><code>'I LOVE CCIS'</code>: The characters to display.</li>
+                        <li><code>0DH</code> (<code>13</code> in decimal): ASCII Carriage Return (<code>\r</code>), moving the cursor to the start of the line.</li>
+                        <li><code>0AH</code> (<code>10</code> in decimal): ASCII Line Feed (<code>\n</code>), moving the cursor down to the next line.</li>
+                        <li><code>'$'</code>: The required string terminator for DOS print function <code>09H</code> so DOS knows where to stop reading memory.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h4>2. Initialization</h4>
+            <ul>
+                <li><strong><code>.CODE</code> &amp; <code>MAIN PROC</code></strong>: Marks the start of executable instructions and defines the <code>MAIN</code> procedure.</li>
+                <li><strong><code>MOV AX, @DATA</code> / <code>MOV DS, AX</code></strong>: Loads the starting memory address of your <code>.DATA</code> segment into the Data Segment register (<code>DS</code>). Because x86 assembly does not allow moving a memory address directly into <code>DS</code>, it routes through the general-purpose <code>AX</code> register first.</li>
+                <li><strong><code>MOV CX, 5</code></strong>: Sets the Counter register (<code>CX</code>) to <code>5</code>. The <code>LOOP</code> instruction automatically uses <code>CX</code> to track how many iterations remain.</li>
+            </ul>
+
+            <h4>3. The Print Loop</h4>
+            <ul>
+                <li><strong><code>DISPLAY:</code></strong>: A label marking the start of the loop block.</li>
+                <li><strong><code>MOV AH, 09H</code></strong>: Selects DOS function <code>09H</code> (Display String), which expects a <code>$</code>-terminated string address in <code>DX</code>.</li>
+                <li><strong><code>LEA DX, MSG</code></strong>: Loads the Effective Address (memory offset) of <code>MSG</code> into <code>DX</code> so DOS knows where the string starts.</li>
+                <li><strong><code>INT 21H</code></strong>: Triggers DOS interrupt <code>21H</code>, executing function <code>09H</code> to print <code>"I LOVE CCIS"</code> followed by a newline.</li>
+                <li><strong><code>LOOP DISPLAY</code></strong>: Decrements <code>CX</code> by 1 (<code>CX = CX - 1</code>). If <code>CX</code> is not zero, it jumps back to the <code>DISPLAY</code> label; once <code>CX</code> reaches <code>0</code>, execution continues to the next line.</li>
+            </ul>
+
+            <h4>4. Program Termination</h4>
+            <ul>
+                <li><strong><code>MOV AH, 4CH</code> / <code>INT 21H</code></strong>: Calls DOS function <code>4CH</code> (Terminate Program) via interrupt <code>21H</code> to safely close the program and return control to the operating system.</li>
+                <li><strong><code>MAIN ENDP</code> / <code>END MAIN</code></strong>: Closes the <code>MAIN</code> procedure and tells the assembler that <code>MAIN</code> is the entry point of the program.</li>
+            </ul>
+        </div>
+    </div>
+  </div>
+</div>

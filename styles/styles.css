@@ -422,6 +422,9 @@ tr:hover td {
   line-height: 1.45;
   color: #d4d4d4;
 }
+.output-preview h4 {
+  color: #9cdcfe;
+}
 .mini-table {
   width: 100%;
   border-collapse: collapse;
